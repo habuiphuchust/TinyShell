@@ -4,12 +4,21 @@
 #include <sstream>
 #include "complexfunctions.h"
 #include <fstream>
+#include <map>
+#include <bits/stdc++.h>
+#include <cstdlib>
+
 
 void runBat (const char* link);
 
 using namespace std;
 
+
 string path = "application/";
+map<string , string> paths = { {"messagebox", "application/messagebox.exe"}, {"te", "application/text.bat"
+}};
+
+
 bool parse(string instruction) {
 	// phan tich dong lenh
 	vector<string> argv;
@@ -33,7 +42,8 @@ bool parse(string instruction) {
 		"resume [Id]:  tiep tuc tien trinh [Id]"<<endl<<
 		"kill [Id]: ket thuc tien trinh [Id]"<<endl<<
 		"path:  xem bien moi truong"<<endl<<
-		"addpath [newpath]: sua bien moi truong"<<endl;
+		"addpath [ten] [path]: sua bien moi truong"<<endl<<
+		"dir []"<<endl;
 		return true;
 	}
 	
@@ -76,17 +86,20 @@ bool parse(string instruction) {
 	
 	if (argv[0] == "path") {//ok
 		if(size == 1) {
-			cout << "path = "<< path <<endl;
+			cout << "danh sach bien moi truong: "<< endl;
+			for ( auto& x : paths) {
+   			 cout << x.first << " = " << x.second << endl;
+			}
 			return true;
 		} else return false;
 	}
 	
 	if (argv[0] == "addpath") { //ok
-		if (size == 2) {
-			addPath(path, argv[1]);
+		if (size == 3) {
+			paths[argv[1]] = argv[2];
 			return true;
 		} else{
-			cout << "nhap sai bien moi truong" << endl;
+			cout << "nhap sai cau lenh" << endl;
 			return true;
 		} 
 		return false;
@@ -97,7 +110,10 @@ bool parse(string instruction) {
 			cout << "nhap thieu ten tien trinh" << endl;
 			return true;
 		}
-		string npath = path + argv[1];
+//		string npath = path + argv[1];
+		string npath = paths[argv[1]];
+		if (npath.empty()) 
+			npath = argv[1];
 		int index = npath.size();
         const char* link = npath.c_str();
         bool bat = false;
@@ -150,8 +166,21 @@ bool parse(string instruction) {
 	}
 	
 	if (argv[0] == "dir") {
-		cout << "chua update cau lenh" << endl;
-		return true;
+		if (size == 2) {
+			string path = argv[1];
+   			string command("dir /a-d ");
+   			command.append(path);
+   			const char* final_command = command.c_str();
+   			system(final_command);
+   			return true;
+		}
+		if (size == 1) {
+			string command("dir /a-d ");
+   			const char* final_command = command.c_str();
+   			system(final_command);
+			return true;
+		}
+		return false;
 	}
 	if (argv[0] == "exit") {
 		

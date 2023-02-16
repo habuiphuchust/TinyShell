@@ -3,5 +3,6 @@ date
 time
 help
 list
-create messagebox.exe b
+create messagebox b
+create cal b
 list
